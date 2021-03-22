@@ -10,6 +10,9 @@ component types
     d.  jsx transforms during build time - (so react is compiled) example <!-- <div> --> (jsx) to React.createElement('div')
     e.  React.createElement(element_name, properties (such as className), ...children)
 
+### lifting state
+means moving state from child components to parent components
+
 ### JSX 
 1.  can use JS in jsx
 

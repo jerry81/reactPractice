@@ -4,17 +4,17 @@ import './index.css';
 
 class Square extends React.Component { // React class component - react has many components
     constructor(props) {
-      super(props)
-      this.state = { // how bind state to props
-          value: null,
-      }
+        super(props)
+        this.state = { // how bind state to props
+            value: null,
+        }
     }
 
     render() { // render function 
         return ( // jsx
-            <button 
-            className="square" 
-            onClick={() =>  { this.setState({value: 'X'})} }>   {/* comments in jsx - curly brackets with slash star - className - specifies css class, setState method from React.Component */}
+            <button
+                className="square"
+                onClick={() => { this.setState({ value: 'X' }) }}>   {/* comments in jsx - curly brackets with slash star - className - specifies css class, setState method from React.Component */}
                 {this.state.value}
             </button>
         );
@@ -22,8 +22,15 @@ class Square extends React.Component { // React class component - react has many
 }
 
 class Board extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+          squares: Array(9).fill(null) // sets every value to a static value
+      }
+    }
+
     renderSquare(i) {
-        return <Square value={i}/>; // a function that returns jsx, round paren not necessary
+        return <Square value={i} />; // a function that returns jsx, round paren not necessary
     }
 
     render() {
@@ -70,7 +77,7 @@ class Game extends React.Component {
 
 // ========================================
 
-ReactDOM.render( 
+ReactDOM.render(
     <Game />,
     document.getElementById('root')
 );
