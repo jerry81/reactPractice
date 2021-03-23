@@ -19,7 +19,8 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares: Array(9).fill(null) // sets every value to a static value
+      squares: Array(9).fill(null), // sets every value to a static value
+      xIsNext: true
     };
   }
 
@@ -34,12 +35,16 @@ class Board extends React.Component {
 
   handleClick(i) {
     const squares = this.state.squares.slice(); // copies the array
-    squares[i] = "X";
-    this.setState({ squares: squares });
+    squares[i] = this.state.xIsNext ? "X" : "O";
+    const next = !this.state.xIsNext;
+    this.setState({
+      squares: squares,
+      xIsNext: next
+    });
   }
 
   render() {
-    const status = "Next player: X";
+    const status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
 
     return (
       <div>
