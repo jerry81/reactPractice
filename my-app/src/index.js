@@ -16,48 +16,18 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null), // sets every value to a static value
-      xIsNext: true
-    };
-  }
-
   renderSquare(i) {
     return (
       <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
       /> // a function that returns jsx, round paren not necessary
     );
   }
 
-  handleClick(i) {
-    const squares = this.state.squares.slice(); // copies the array
-    if (calculateWinner(squares) || squares[i]) return 
-    
-    squares[i] = this.state.xIsNext ? "X" : "O";
-    const next = !this.state.xIsNext;
-    this.setState({
-      squares: squares,
-      xIsNext: next
-    });
-  }
-
   render() {
-      const winner = calculateWinner(this.state.squares)
-      console.log('winner is ', winner)
-    let status
-    if (winner) {
-        status = `Winnder ${winner}`
-    } else {
-        status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
-    }
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)} {/* composing with function */}
           {this.renderSquare(1)}
@@ -79,15 +49,55 @@ class Board extends React.Component {
 } // end board
 
 class Game extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      history: [{ squares: Array(9).fill(null) }], // sets every value to a static value
+      xIsNext: true,
+      status: "",
+      currentIdx: 0
+    };
+  }
+
+  handleClick(i) {
+    const squares = this.state.history[this.state.currentIdx].squares.slice(); // copies the array
+    if (calculateWinner(squares) || squares[i]) return;
+
+    squares[i] = this.state.xIsNext ? "X" : "O";
+    const next = !this.state.xIsNext;
+    this.setState({
+      squares: squares,
+      xIsNext: next
+    });
+  }
+
   render() {
+    console.log("state is ", this.state);
+    console.log("this.state.currentIdx", this.state.currentIdx);
+    const winner = calculateWinner(
+      this.state.history[this.state.currentIdx].squares
+    );
+    console.log("winner is ", winner);
+    let status;
+    if (winner) {
+      status = `Winner ${winner}`;
+    } else {
+      status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
+    }
     return (
       <div className="game">
         <div className="game-board">
-          <Board /> {/* use component as element */}
+          <Board
+            onClick={() => {
+              this.handleClick();
+            }}
+            squares={this.state.history[this.state.currentIdx].squares}
+          />{" "}
+          {/* use component as element */}
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <div>{status}</div>
+          <ol>History</ol>
         </div>
       </div>
     );
@@ -95,25 +105,25 @@ class Game extends React.Component {
 }
 
 function calculateWinner(squares) {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-      ];
-      let returned = null
-      lines.forEach((line) => {
-          const [a,b,c] = line
-          if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-              console.log('winner found', squares[a])
-              returned = squares[a]
-          }
-      })
-      return returned
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+  let returned = null;
+  lines.forEach(line => {
+    const [a, b, c] = line;
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      console.log("winner found", squares[a]);
+      returned = squares[a];
+    }
+  });
+  return returned;
 }
 
 // ========================================
