@@ -52,9 +52,13 @@ class Game extends React.Component {
   constructor() {
     super();
     this.state = {
-      history: [{ squares: Array(9).fill(null) }], // sets every value to a static value
+      history: [
+        { 
+          squares: Array(9).fill(null), 
+          xIsNext: true,
+        }
+      ], // sets every value to a static value
       xIsNext: true,
-      status: "",
       currentIdx: 0
     };
   }
@@ -64,16 +68,34 @@ class Game extends React.Component {
     if (calculateWinner(squares) || squares[i]) return;
 
     squares[i] = this.state.xIsNext ? "X" : "O";
+    const snap = this.state.history.slice();
     const next = !this.state.xIsNext;
+    snap.push({ squares, xIsNext: next });
     this.setState({
-      squares: squares,
-      xIsNext: next
+      history: snap,
+      xIsNext: next,
+      currentIdx: this.state.currentIdx + 1
+    });
+  }
+
+  jumpToStep(idx) {
+    console.log('ready to jump to ', idx)
+    const newHistory = this.state.history.slice(0, idx + 1)
+    console.log('newHistory is ', newHistory)
+    this.setState({
+      history: newHistory,
+      xIsNext: newHistory[idx].xIsNext,
+      currentIdx: idx
+    })
+  }
+
+  renderHistory() {
+    return this.state.history.slice().map((_, idx) => {
+      return <div className="historyIndex" key={idx} onClick={() => { this.jumpToStep(idx)}}>{idx + 1}</div>;
     });
   }
 
   render() {
-    console.log("state is ", this.state);
-    console.log("this.state.currentIdx", this.state.currentIdx);
     const winner = calculateWinner(
       this.state.history[this.state.currentIdx].squares
     );
@@ -88,16 +110,19 @@ class Game extends React.Component {
       <div className="game">
         <div className="game-board">
           <Board
-            onClick={() => {
-              this.handleClick();
+            onClick={i => {
+              this.handleClick(i);
             }}
             squares={this.state.history[this.state.currentIdx].squares}
-          />{" "}
+          />
           {/* use component as element */}
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>History</ol>
+          <ol>
+            History
+            {this.renderHistory()}
+          </ol>
         </div>
       </div>
     );
@@ -105,6 +130,7 @@ class Game extends React.Component {
 }
 
 function calculateWinner(squares) {
+  console.log("squares inside is ", squares);
   const lines = [
     [0, 1, 2],
     [3, 4, 5],

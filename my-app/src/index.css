@@ -49,4 +49,15 @@ body {
     margin-left: 20px;
   }
   
+  .historyIndex {
+    color: blue;
+    margin: 10px;
+  }
+
+  .historyIndex:hover {
+    color: blue;
+    margin: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
   
